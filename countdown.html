@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>倒數計時</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; }
+    .container { max-width: 400px; margin: 60px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+    h1 { text-align: center; margin-bottom: 32px; }
+    .countdown { margin: 18px 0; font-size: 1.2em; }
+    .label { font-weight: bold; }
+    .value { color: #0070f3; font-size: 1.5em; margin-left: 8px; }
+    .clock {
+      display: inline-block;
+      background: #222;
+      color: #0ff;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 2.2em;
+      padding: 8px 18px;
+      border-radius: 8px;
+      letter-spacing: 2px;
+      min-width: 110px;
+      text-align: center;
+      box-shadow: 0 1px 4px #0002;
+      margin-left: 10px;
+    }
+    .cards {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0001;
+      padding: 28px 20px 20px 20px;
+      min-width: 220px;
+      max-width: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .card-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-bottom: 18px;
+      color: #0070f3;
+      letter-spacing: 1px;
+    }
+    @media (max-width: 700px) {
+      .cards {
+        flex-direction: column;
+        align-items: center;
+      }
+      .card {
+        width: 90%;
+        min-width: unset;
+        max-width: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>倒數計時</h1>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">今天結束還有</div>
+        <span class="clock" id="dayClock"></span>
+      </div>
+      <div class="card">
+        <div class="card-title">這週結束還有</div>
+        <span class="clock" id="weekClock"></span>
+      </div>
+      <div class="card">
+        <div class="card-title">這個月結束還有</div>
+        <span class="clock" id="monthClock"></span>
+      </div>
+    </div>
+  </div>
+  <script>
+    function formatClock(hours) {
+      if (hours < 0) hours = 0;
+      const h = Math.floor(hours);
+      const m = Math.floor((hours - h) * 60);
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    }
+
+    function updateCountdowns() {
+      const now = new Date();
+
+      // 今天結束
+      const endOfDay = new Date(now);
+      endOfDay.setHours(23, 59, 59, 999);
+      const hoursLeftDay = (endOfDay - now) / (1000 * 60 * 60);
+
+      // 這週結束（以週日為一週的最後一天）
+      const endOfWeek = new Date(now);
+      const dayOfWeek = endOfWeek.getDay(); // 0=週日, 6=週六
+      const daysToSunday = 7 - dayOfWeek;
+      endOfWeek.setDate(endOfWeek.getDate() + daysToSunday);
+      endOfWeek.setHours(23, 59, 59, 999);
+      const hoursLeftWeek = (endOfWeek - now) / (1000 * 60 * 60);
+
+      // 這個月結束
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+      const hoursLeftMonth = (endOfMonth - now) / (1000 * 60 * 60);
+
+      document.getElementById('dayClock').textContent = formatClock(hoursLeftDay);
+      document.getElementById('weekClock').textContent = formatClock(hoursLeftWeek);
+      document.getElementById('monthClock').textContent = formatClock(hoursLeftMonth);
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000); // 每秒更新一次
+  </script>
+</body>
+</html> 
